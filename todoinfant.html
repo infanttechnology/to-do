@@ -1,0 +1,647 @@
+<div id="app-root"></div>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root{
+    --bg:#EDEAE3;
+    --surface:#FFFFFF;
+    --input-bg:#fdfcfa;
+    --ink:#1C2321;
+    --muted:#6B7280;
+    --teal:#12645A;
+    --teal-dim:#E4EFEC;
+    --indigo:#2B3A67;
+    --indigo-dim:#E8EAF2;
+    --sage:#6B8F71;
+    --sage-dim:#EEF3EE;
+    --danger:#B3261E;
+    --danger-dim:#F7E7E5;
+    --border:#DBD5C7;
+    --amber:#B8720A;
+    --amber-dim:#FBF0DE;
+    --toast-bg:#1C2321;
+    --toast-text:#FFFFFF;
+    --shadow:rgba(0,0,0,.05);
+  }
+  #app-root[data-theme="dark"]{
+    --bg:#12171A;
+    --surface:#1B2226;
+    --input-bg:#161C20;
+    --ink:#EDEFEF;
+    --muted:#8B969C;
+    --teal:#3FD1B7;
+    --teal-dim:#173330;
+    --indigo:#8FA6FF;
+    --indigo-dim:#1E2440;
+    --sage:#9BC8A2;
+    --sage-dim:#1B2A1D;
+    --danger:#F0847A;
+    --danger-dim:#3A1E1C;
+    --border:#2B3338;
+    --amber:#E8B24E;
+    --amber-dim:#332A15;
+    --toast-bg:#EDEFEF;
+    --toast-text:#12171A;
+    --shadow:rgba(0,0,0,.35);
+  }
+  #app-root{ transition: background .25s ease; }
+  *{box-sizing:border-box;}
+  #app-root{
+    font-family:'Inter',system-ui,sans-serif;
+    color:var(--ink);
+    background:var(--bg);
+    min-height:100vh;
+    padding:28px 20px 60px;
+  }
+  .wrap{ max-width:1080px; margin:0 auto; }
+
+  /* ---------- Header ---------- */
+  .header{
+    display:flex; align-items:center; gap:16px;
+    background:var(--surface); border:1px solid var(--border); border-radius:14px;
+    padding:18px 22px; margin-bottom:22px;
+    box-shadow:0 1px 3px var(--shadow);
+    flex-wrap:wrap;
+  }
+  .logo-box{
+    width:54px; height:54px; border-radius:10px; background:#fff;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    border:1px solid var(--border); overflow:hidden;
+  }
+  .logo-box img{ width:100%; height:100%; object-fit:contain; padding:4px; }
+  .logo-fallback{
+    font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:18px; color:var(--teal);
+  }
+  .header-text{ flex:1; min-width:180px; }
+  .company-name{
+    font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:13px;
+    letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); margin:0 0 2px;
+  }
+  .greeting{
+    font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:26px; margin:0;
+    line-height:1.2;
+  }
+  .greeting span{ color:var(--teal); }
+  .header-stats{ display:flex; gap:10px; flex-shrink:0; align-items:center; flex-wrap:wrap; }
+  .stat-chip{
+    text-align:center; padding:8px 14px; border-radius:10px; background:var(--bg);
+    border:1px solid var(--border); min-width:64px;
+  }
+  .stat-num{ font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:18px; display:block; }
+  .stat-label{ font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; }
+
+  /* ---------- Layout ---------- */
+  .layout{ display:grid; grid-template-columns: 340px 1fr; gap:22px; align-items:start; }
+  @media (max-width: 820px){ .layout{ grid-template-columns: 1fr; } }
+
+  .panel{
+    background:var(--surface); border:1px solid var(--border); border-radius:14px;
+    padding:20px; box-shadow:0 1px 3px var(--shadow);
+  }
+  .panel-title{
+    font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:15px;
+    margin:0 0 16px; display:flex; align-items:center; gap:8px;
+  }
+  .panel-title .dot{ width:8px; height:8px; border-radius:50%; background:var(--teal); }
+
+  label{ display:block; font-size:12px; font-weight:600; color:var(--muted); margin:14px 0 6px; text-transform:uppercase; letter-spacing:.4px; }
+  label:first-of-type{ margin-top:0; }
+  input[type="text"], input[type="date"], input[type="time"], textarea{
+    width:100%; border:1px solid var(--border); border-radius:8px; padding:10px 12px;
+    font-family:'Inter',sans-serif; font-size:14px; color:var(--ink); background:var(--input-bg);
+    outline:none; transition:border-color .15s;
+  }
+  input:focus, textarea:focus{ border-color:var(--teal); }
+  textarea{ resize:vertical; min-height:56px; }
+
+  .day-preview{
+    margin-top:6px; font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--indigo);
+    background:var(--indigo-dim); padding:6px 10px; border-radius:6px; display:inline-block;
+  }
+
+  .college-preview{
+    display:flex; align-items:center; gap:8px; margin-top:8px; font-size:12px; color:var(--muted);
+    min-height:20px;
+  }
+  .college-preview img{ width:20px; height:20px; object-fit:contain; border-radius:4px; }
+  .college-preview.loading{ color:var(--amber); }
+  .college-preview.notfound{ color:var(--muted); }
+
+  .btn-add{
+    margin-top:18px; width:100%; background:var(--teal); color:#fff; border:none;
+    padding:12px; border-radius:9px; font-weight:600; font-size:14px; cursor:pointer;
+    font-family:'Inter',sans-serif; transition:background .15s, transform .1s;
+  }
+  .btn-add:hover{ background:#0d4f44; }
+  .btn-add:active{ transform:scale(.98); }
+  .btn-add:disabled{ background:#B7C4C1; cursor:not-allowed; }
+
+  /* ---------- Task list ---------- */
+  .section-heading{
+    display:flex; align-items:center; justify-content:space-between; margin:0 0 12px;
+  }
+  .section-heading h2{
+    font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:700; margin:0;
+    display:flex; align-items:center; gap:8px;
+  }
+  .count-badge{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; background:var(--bg);
+    border:1px solid var(--border); border-radius:20px; padding:2px 9px; color:var(--muted);
+  }
+  .toggle-btn{
+    background:none; border:none; color:var(--muted); font-size:12px; cursor:pointer;
+    font-family:'Inter',sans-serif; text-decoration:underline;
+  }
+
+  .task-list{ display:flex; flex-direction:column; gap:12px; margin-bottom:28px; }
+
+  .task-card{
+    display:flex; background:var(--surface); border:1px solid var(--border); border-radius:12px;
+    overflow:visible; box-shadow:0 1px 3px var(--shadow); position:relative;
+    animation:fadeIn .25s ease;
+  }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;} }
+  .task-card.completed{ opacity:.62; }
+  .task-card.overdue{ border-color:var(--danger); }
+
+  .checkbox-zone{
+    display:flex; align-items:flex-start; padding:16px 6px 16px 16px;
+  }
+  .checkbox{
+    width:24px; height:24px; border-radius:50%; border:2px solid var(--teal); background:#fff;
+    cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    transition:all .15s; padding:0;
+  }
+  .checkbox.checked{ background:var(--teal); }
+  .checkbox svg{ width:14px; height:14px; stroke:#fff; opacity:0; transition:opacity .1s; }
+  .checkbox.checked svg{ opacity:1; }
+
+  .task-main{ flex:1; padding:14px 14px 14px 4px; min-width:0; }
+  .task-title{ font-weight:600; font-size:15px; margin:0 0 4px; word-break:break-word; }
+  .task-card.completed .task-title{ text-decoration:line-through; color:var(--muted); }
+  .task-desc{ font-size:13px; color:var(--muted); margin:0 0 8px; word-break:break-word; }
+  .task-meta{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  .college-chip{
+    display:flex; align-items:center; gap:6px; background:var(--amber-dim); border:1px solid #EBD8AE;
+    border-radius:20px; padding:3px 10px 3px 4px; font-size:11.5px; color:var(--amber); font-weight:600;
+  }
+  .college-chip img{ width:18px; height:18px; border-radius:50%; object-fit:contain; background:#fff; }
+  .overdue-tag{
+    font-size:11px; font-weight:700; color:var(--danger); background:var(--danger-dim);
+    padding:3px 9px; border-radius:20px; text-transform:uppercase; letter-spacing:.4px;
+  }
+  .completed-tag{
+    font-size:11px; font-weight:600; color:var(--sage); background:var(--sage-dim);
+    padding:3px 9px; border-radius:20px;
+  }
+
+  .task-stub{
+    width:132px; flex-shrink:0; border-left:2px dashed var(--border); position:relative;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:10px 8px; gap:2px; text-align:center;
+  }
+  .task-stub::before, .task-stub::after{
+    content:''; position:absolute; left:-9px; width:16px; height:16px; border-radius:50%;
+    background:var(--bg); border:1px solid var(--border);
+  }
+  .task-stub::before{ top:-9px; }
+  .task-stub::after{ bottom:-9px; }
+  .stub-day{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:12px; color:var(--indigo); text-transform:uppercase; letter-spacing:.5px; }
+  .stub-date{ font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--ink); }
+  .stub-time{ font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--muted); background:var(--bg); padding:1px 8px; border-radius:10px; margin-top:2px; }
+
+  .delete-btn{
+    position:absolute; top:6px; right:8px; background:none; border:none; cursor:pointer;
+    color:var(--border); font-size:16px; line-height:1; padding:4px; transition:color .15s;
+  }
+  .delete-btn:hover{ color:var(--danger); }
+
+  .empty-state{
+    text-align:center; padding:36px 20px; color:var(--muted); font-size:13px;
+    border:1px dashed var(--border); border-radius:12px; background:var(--surface);
+  }
+
+  .toast{
+    position:fixed; bottom:22px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--toast-bg); color:var(--toast-text); padding:10px 18px; border-radius:8px; font-size:13px;
+    opacity:0; transition:all .25s; pointer-events:none; z-index:50; display:flex; align-items:center; gap:10px;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); pointer-events:auto; }
+  .toast-action{
+    background:none; border:1px solid currentColor; color:inherit; padding:2px 10px;
+    border-radius:6px; cursor:pointer; font-size:12px; font-family:'Inter',sans-serif; opacity:.85;
+  }
+  .toast-action:hover{ opacity:1; }
+
+  /* ---------- Theme toggle ---------- */
+  .theme-toggle{
+    width:52px; height:28px; border-radius:20px; background:var(--indigo-dim); border:1px solid var(--border);
+    position:relative; cursor:pointer; flex-shrink:0; padding:0; transition:background .2s;
+  }
+  .theme-toggle .knob{
+    width:22px; height:22px; border-radius:50%; background:var(--surface); position:absolute; top:2px; left:2px;
+    display:flex; align-items:center; justify-content:center; transition:transform .25s ease, background .2s;
+    box-shadow:0 1px 2px var(--shadow);
+  }
+  .theme-toggle.dark .knob{ transform:translateX(24px); }
+  .theme-toggle svg{ width:14px; height:14px; stroke:var(--amber); fill:none; }
+  .theme-toggle.dark svg{ stroke:var(--indigo); }
+</style>
+
+<script>
+(function(){
+  const ROOT = document.getElementById('app-root');
+  const STORAGE_KEY = 'infant-tech-todos';
+  const THEME_KEY = 'infant-tech-theme';
+  const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxBj9mwsulUl1N4edGG-n0V0p514De_BgQnQXuXSA73gI4ZfLT_gxAwf2j_XGsa9P4/exec';
+  let tasks = [];
+  let theme = 'light';
+  let completedOpen = true;
+  let collegeFetchTimer = null;
+  let currentCollegeLogo = null;
+  let currentCollegeStatus = 'idle'; // idle | loading | found | notfound
+
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+  function getGreetingWord(){
+    const h = new Date().getHours();
+    if(h < 12) return 'Good morning';
+    if(h < 17) return 'Good afternoon';
+    return 'Good evening';
+  }
+
+  function dayFromDate(dateStr){
+    if(!dateStr) return '';
+    const [y,m,d] = dateStr.split('-').map(Number);
+    const dt = new Date(y, m-1, d);
+    return dt.toLocaleDateString('en-US', { weekday:'long' });
+  }
+
+  function formatDateNice(dateStr){
+    if(!dateStr) return '';
+    const [y,m,d] = dateStr.split('-').map(Number);
+    const dt = new Date(y, m-1, d);
+    return dt.toLocaleDateString('en-US', { day:'2-digit', month:'short', year:'numeric' });
+  }
+
+  function formatTimeNice(timeStr){
+    if(!timeStr) return '';
+    const [h,min] = timeStr.split(':').map(Number);
+    const period = h >= 12 ? 'PM' : 'AM';
+    const h12 = h % 12 === 0 ? 12 : h % 12;
+    return h12 + ':' + String(min).padStart(2,'0') + ' ' + period;
+  }
+
+  function isOverdue(task){
+    if(task.completed || !task.date) return false;
+    const [y,m,d] = task.date.split('-').map(Number);
+    const [hh,mm] = (task.time || '23:59').split(':').map(Number);
+    const dt = new Date(y, m-1, d, hh, mm);
+    return dt.getTime() < Date.now();
+  }
+
+  function loadTheme(){
+    let stored = null;
+    try{ stored = localStorage.getItem(THEME_KEY); }catch(e){ stored = null; }
+    if(stored === 'dark' || stored === 'light'){
+      theme = stored;
+    } else {
+      theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+    }
+    ROOT.setAttribute('data-theme', theme);
+  }
+
+  function toggleTheme(){
+    theme = theme === 'dark' ? 'light' : 'dark';
+    ROOT.setAttribute('data-theme', theme);
+    render();
+    try{ localStorage.setItem(THEME_KEY, theme); }catch(e){}
+  }
+
+  function pushToSheet(action, task){
+    const payload = {
+      action: action,
+      task: {
+        id: task.id,
+        title: task.title || '',
+        description: task.description || '',
+        college: task.college || '',
+        date: task.date || '',
+        time: task.time || '',
+        status: task.completed ? 'Completed' : 'Pending',
+        completedOn: task.completedAt ? new Date(task.completedAt).toISOString() : ''
+      }
+    };
+    fetch(SHEET_URL, { method:'POST', mode:'no-cors', body: JSON.stringify(payload) }).catch(()=>{});
+  }
+
+  function cacheLocally(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks)); }catch(e){}
+  }
+
+  function loadLocalCache(){
+    try{
+      const v = localStorage.getItem(STORAGE_KEY);
+      return v ? JSON.parse(v) : [];
+    }catch(e){ return []; }
+  }
+
+  async function loadTasks(){
+    try{
+      const res = await fetch(SHEET_URL, { method:'GET' });
+      if(!res.ok) throw new Error('bad response');
+      const rows = await res.json();
+      tasks = rows.map(r => ({
+        id: r.id,
+        title: r.title || '',
+        description: r.description || '',
+        date: r.date || '',
+        time: r.time || '',
+        college: r.college || '',
+        collegeLogo: null,
+        completed: (r.status || '').toString().toLowerCase() === 'completed',
+        completedAt: r.completedOn ? (Date.parse(r.completedOn) || null) : null,
+        createdAt: Date.now()
+      }));
+      cacheLocally();
+    }catch(e){
+      tasks = loadLocalCache();
+      showToast('Could not reach your Google Sheet — showing last saved copy');
+    }
+    render();
+  }
+
+  function saveTasks(){
+    cacheLocally();
+  }
+
+  function showToast(msg, actionLabel, actionFn){
+    const t = document.getElementById('toast');
+    if(!t) return;
+    t.innerHTML = '<span>' + msg + '</span>' + (actionLabel ? '<button class="toast-action" id="toastAction">'+actionLabel+'</button>' : '');
+    t.classList.add('show');
+    if(actionLabel && actionFn){
+      document.getElementById('toastAction').onclick = ()=>{ actionFn(); t.classList.remove('show'); };
+    }
+    clearTimeout(t._timer);
+    t._timer = setTimeout(()=> t.classList.remove('show'), 4000);
+  }
+
+  async function fetchCollegeLogo(name){
+    if(!name || name.trim().length < 2){
+      currentCollegeStatus = 'idle'; currentCollegeLogo = null; renderCollegePreview(); return;
+    }
+    currentCollegeStatus = 'loading'; renderCollegePreview();
+    try{
+      const res = await fetch('https://autocomplete.clearbit.com/v1/companies/suggest?query=' + encodeURIComponent(name));
+      const data = await res.json();
+      if(data && data.length > 0 && data[0].logo){
+        currentCollegeLogo = data[0].logo;
+        currentCollegeStatus = 'found';
+      } else {
+        currentCollegeLogo = null;
+        currentCollegeStatus = 'notfound';
+      }
+    }catch(e){
+      currentCollegeLogo = null;
+      currentCollegeStatus = 'notfound';
+    }
+    renderCollegePreview();
+  }
+
+  function renderCollegePreview(){
+    const el = document.getElementById('collegePreview');
+    if(!el) return;
+    if(currentCollegeStatus === 'idle'){ el.className='college-preview'; el.innerHTML=''; return; }
+    if(currentCollegeStatus === 'loading'){ el.className='college-preview loading'; el.innerHTML='Looking up logo online…'; return; }
+    if(currentCollegeStatus === 'found'){ el.className='college-preview'; el.innerHTML = '<img src="'+currentCollegeLogo+'" onerror="this.style.display=\'none\'"/> Logo found'; return; }
+    el.className='college-preview notfound'; el.innerHTML='No online logo found — will show a placeholder icon';
+  }
+
+  function addTask(data){
+    const newTask = {
+      id: uid(),
+      title: data.title,
+      description: data.description,
+      date: data.date,
+      time: data.time,
+      college: data.college,
+      collegeLogo: data.collegeLogo,
+      completed: false,
+      completedAt: null,
+      createdAt: Date.now()
+    };
+    tasks.push(newTask);
+    saveTasks();
+    pushToSheet('add', newTask);
+    render();
+  }
+
+  function toggleTask(id){
+    const t = tasks.find(x => x.id === id);
+    if(!t) return;
+    t.completed = !t.completed;
+    t.completedAt = t.completed ? Date.now() : null;
+    saveTasks();
+    pushToSheet('update', t);
+    render();
+  }
+
+  function deleteTask(id){
+    const idx = tasks.findIndex(x => x.id === id);
+    if(idx === -1) return;
+    const removed = tasks[idx];
+    tasks = tasks.filter(x => x.id !== id);
+    saveTasks();
+    pushToSheet('delete', removed);
+    render();
+    showToast('Task deleted', 'Undo', ()=>{
+      tasks.splice(idx, 0, removed);
+      saveTasks();
+      pushToSheet('add', removed);
+      render();
+    });
+  }
+
+  function sortActive(list){
+    return list.slice().sort((a,b)=>{
+      const ak = (a.date||'9999') + (a.time||'99:99');
+      const bk = (b.date||'9999') + (b.time||'99:99');
+      return ak.localeCompare(bk);
+    });
+  }
+  function sortCompleted(list){
+    return list.slice().sort((a,b)=> (b.completedAt||0) - (a.completedAt||0));
+  }
+
+  function taskCardHtml(task){
+    const overdue = isOverdue(task);
+    const collegeChip = task.college ? (
+      '<span class="college-chip">' +
+      (task.collegeLogo ? '<img src="'+task.collegeLogo+'" onerror="this.style.display=\'none\'"/>' : '\u{1F393}') +
+      ' ' + escapeHtml(task.college) + '</span>'
+    ) : '';
+    const dayStr = dayFromDate(task.date);
+    return (
+      '<div class="task-card ' + (task.completed?'completed':'') + ' ' + (overdue?'overdue':'') + '" data-id="'+task.id+'">' +
+        '<button class="delete-btn" data-action="delete" data-id="'+task.id+'" title="Delete task">\u2715</button>' +
+        '<div class="checkbox-zone">' +
+          '<button class="checkbox ' + (task.completed?'checked':'') + '" data-action="toggle" data-id="'+task.id+'" title="Mark finished">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>' +
+          '</button>' +
+        '</div>' +
+        '<div class="task-main">' +
+          '<p class="task-title">' + escapeHtml(task.title) + '</p>' +
+          (task.description ? '<p class="task-desc">' + escapeHtml(task.description) + '</p>' : '') +
+          '<div class="task-meta">' +
+            collegeChip +
+            (overdue ? '<span class="overdue-tag">Overdue</span>' : '') +
+            (task.completed ? '<span class="completed-tag">Finished ' + new Date(task.completedAt).toLocaleDateString('en-US',{day:'2-digit',month:'short'}) + '</span>' : '') +
+          '</div>' +
+        '</div>' +
+        '<div class="task-stub">' +
+          (dayStr ? '<span class="stub-day">' + dayStr.slice(0,3) + '</span>' : '') +
+          (task.date ? '<span class="stub-date">' + formatDateNice(task.date) + '</span>' : '<span class="stub-date">No date</span>') +
+          (task.time ? '<span class="stub-time">' + formatTimeNice(task.time) + '</span>' : '') +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function escapeHtml(s){
+    if(!s) return '';
+    return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function render(){
+    const active = sortActive(tasks.filter(t => !t.completed));
+    const completed = sortCompleted(tasks.filter(t => t.completed));
+
+    ROOT.innerHTML =
+      '<div class="wrap">' +
+        '<div class="header">' +
+          '<div class="logo-box"><span class="logo-fallback">IT</span></div>' +
+          '<div class="header-text">' +
+            '<p class="company-name">Infant Technology</p>' +
+            '<p class="greeting">' + getGreetingWord() + ', <span>Chandran</span></p>' +
+          '</div>' +
+          '<div class="header-stats">' +
+            '<div class="stat-chip"><span class="stat-num">' + active.length + '</span><span class="stat-label">Pending</span></div>' +
+            '<div class="stat-chip"><span class="stat-num">' + completed.length + '</span><span class="stat-label">Done</span></div>' +
+            '<button class="theme-toggle ' + (theme==='dark'?'dark':'') + '" id="themeToggle" title="Switch day/night theme">' +
+              '<span class="knob">' +
+                (theme==='dark'
+                  ? '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>'
+                  : '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>') +
+              '</span>' +
+            '</button>' +
+          '</div>' +
+        '</div>' +
+
+        '<div class="layout">' +
+          '<div class="panel">' +
+            '<p class="panel-title"><span class="dot"></span>Add a task</p>' +
+            '<form id="taskForm">' +
+              '<label for="f-title">Task</label>' +
+              '<input type="text" id="f-title" placeholder="e.g. Prepare client proposal" required />' +
+
+              '<label for="f-desc">Notes (optional)</label>' +
+              '<textarea id="f-desc" placeholder="Any details worth remembering"></textarea>' +
+
+              '<label for="f-college">College / Institution (optional)</label>' +
+              '<input type="text" id="f-college" placeholder="e.g. Anna University" autocomplete="off" />' +
+              '<div class="college-preview" id="collegePreview"></div>' +
+
+              '<label>Date &amp; Day</label>' +
+              '<input type="date" id="f-date" />' +
+              '<div class="day-preview" id="dayPreview" style="display:none;"></div>' +
+
+              '<label for="f-time">Time</label>' +
+              '<input type="time" id="f-time" />' +
+
+              '<button type="submit" class="btn-add">Add to list</button>' +
+            '</form>' +
+          '</div>' +
+
+          '<div class="main-col">' +
+            '<div class="section-heading">' +
+              '<h2>Pending tasks <span class="count-badge">' + active.length + '</span></h2>' +
+            '</div>' +
+            '<div class="task-list">' +
+              (active.length ? active.map(taskCardHtml).join('') : '<div class="empty-state">No pending tasks — add one on the left to get started.</div>') +
+            '</div>' +
+
+            '<div class="section-heading">' +
+              '<h2>Finished tasks <span class="count-badge">' + completed.length + '</span></h2>' +
+              (completed.length ? '<button class="toggle-btn" id="toggleCompleted">' + (completedOpen ? 'Hide' : 'Show') + '</button>' : '') +
+            '</div>' +
+            (completedOpen ? '<div class="task-list">' +
+              (completed.length ? completed.map(taskCardHtml).join('') : '<div class="empty-state">Finished tasks will be archived here — and kept, so you can look back anytime.</div>') +
+            '</div>' : '') +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="toast" id="toast"></div>';
+
+    // wire events
+    document.getElementById('taskForm').addEventListener('submit', onSubmit);
+    document.getElementById('f-college').addEventListener('input', onCollegeInput);
+    document.getElementById('f-date').addEventListener('change', onDateChange);
+    const toggleBtn = document.getElementById('toggleCompleted');
+    if(toggleBtn) toggleBtn.addEventListener('click', ()=>{ completedOpen = !completedOpen; render(); });
+    document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+    ROOT.querySelectorAll('[data-action="toggle"]').forEach(btn=>{
+      btn.addEventListener('click', ()=> toggleTask(btn.getAttribute('data-id')));
+    });
+    ROOT.querySelectorAll('[data-action="delete"]').forEach(btn=>{
+      btn.addEventListener('click', ()=> deleteTask(btn.getAttribute('data-id')));
+    });
+
+    renderCollegePreview();
+  }
+
+  function onDateChange(e){
+    const val = e.target.value;
+    const preview = document.getElementById('dayPreview');
+    if(val){
+      preview.style.display = 'inline-block';
+      preview.textContent = dayFromDate(val);
+    } else {
+      preview.style.display = 'none';
+    }
+  }
+
+  function onCollegeInput(e){
+    clearTimeout(collegeFetchTimer);
+    const val = e.target.value;
+    collegeFetchTimer = setTimeout(()=> fetchCollegeLogo(val), 500);
+  }
+
+  function onSubmit(e){
+    e.preventDefault();
+    const title = document.getElementById('f-title').value.trim();
+    if(!title) return;
+    const description = document.getElementById('f-desc').value.trim();
+    const college = document.getElementById('f-college').value.trim();
+    const date = document.getElementById('f-date').value;
+    const time = document.getElementById('f-time').value;
+
+    addTask({
+      title, description, college,
+      collegeLogo: college ? currentCollegeLogo : null,
+      date, time
+    });
+
+    currentCollegeLogo = null;
+    currentCollegeStatus = 'idle';
+    renderCollegePreview();
+    showToast('Task added');
+  }
+
+  (async function init(){
+    loadTheme();
+    await loadTasks();
+  })();
+})();
+</script>
